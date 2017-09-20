@@ -128,6 +128,7 @@ set_environment() {
 
     export FISSION_URL=http://$(kubectl -n $ns get svc controller -o jsonpath='{...ip}')
     export FISSION_ROUTER=$(kubectl -n $ns get svc router -o jsonpath='{...ip}')
+    export FISSION_NATS_STREAMING_URL=http://defaultFissionAuthToken@$(kubectl -n $ns get svc nats-streaming -o jsonpath='{...ip}'):4222
 
     # set path to include cli
     export PATH=$ROOT/fission:$PATH
@@ -214,7 +215,7 @@ run_all_tests() {
     export FISSION_NAMESPACE=f-$id
     export FUNCTION_NAMESPACE=f-func-$id
         
-    for file in $ROOT/test/tests/test_*.sh
+    for file in $(find $ROOT/test/tests -name 'test_*.sh')
     do
 	echo ------- Running $file -------
 	if $file
