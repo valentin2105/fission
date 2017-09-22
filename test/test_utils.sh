@@ -203,6 +203,8 @@ dump_logs() {
     dump_fission_logs $ns $fns controller
     dump_fission_logs $ns $fns router
     dump_fission_logs $ns $fns poolmgr
+    dump_fission_logs $ns $fns mqtrigger
+    dump_fission_logs $ns $fns nats-streaming
     dump_function_pod_logs $ns $fns
     dump_fission_tprs
 }
