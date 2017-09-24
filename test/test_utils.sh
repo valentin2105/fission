@@ -61,6 +61,10 @@ generate_test_id() {
     echo $(date|md5sum|cut -c1-6)
 }
 
+helm_purge_old() {
+    helm ls | grep fission | awk '{print $1}' | xargs helm delete --purge
+}
+
 helm_install_fission() {
     id=$1
     image=$2
@@ -75,8 +79,6 @@ helm_install_fission() {
 
     helmVars=image=$image,imageTag=$imageTag,fetcherImage=$fetcherImage,fetcherImageTag=$fetcherImageTag,functionNamespace=$fns,controllerPort=$controllerNodeport,routerPort=$routerNodeport,pullPolicy=Always,analytics=false
 
-    helm_setup
-    
     echo "Installing fission"
     helm install		\
 	 --wait			\
@@ -239,6 +241,9 @@ install_and_test() {
     controllerPort=31234
     routerPort=31235
 
+    helm_setup
+    helm_purge_old
+    
     id=$(generate_test_id)
     trap "helm_uninstall_fission $id" EXIT
     if ! helm_install_fission $id $image $imageTag $fetcherImage $fetcherImageTag $controllerPort $routerPort
